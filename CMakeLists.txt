@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(comp_345)
+project(warzone_game)
 
 # set c++ standard
 set(CMAKE_CXX_STANDARD 20)
