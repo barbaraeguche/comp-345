@@ -2,12 +2,12 @@
 
 
 // Base Order
-Orders::Orders():
+Order::Order():
   type{nullptr},
   description{nullptr} 
   {}
 
-std::ostream& operator<<(std::ostream& os, const Orders& order) { 
+std::ostream& operator<<(std::ostream& os, const Order& order) { 
   if (!order.type || !order.description) {
     os << "This order is not properly initialized.";
     return os;
@@ -46,7 +46,7 @@ OrderDeploy& OrderDeploy::operator=(const OrderDeploy& other) {
 bool OrderDeploy::validate() { return false; }
 void OrderDeploy::execute() {}
 
-Orders* OrderDeploy::clone() const { 
+Order* OrderDeploy::clone() const { 
   return new OrderDeploy(*this); 
 }
 
@@ -80,7 +80,7 @@ OrderAdvance& OrderAdvance::operator=(const OrderAdvance& other) {
 bool OrderAdvance::validate() { return false; }
 void OrderAdvance::execute() {}
 
-Orders* OrderAdvance::clone() const { 
+Order* OrderAdvance::clone() const { 
   return new OrderAdvance(*this); 
 }
 
@@ -114,7 +114,7 @@ OrderBomb& OrderBomb::operator=(const OrderBomb& other) {
 bool OrderBomb::validate() { return false; }
 void OrderBomb::execute() {}
 
-Orders* OrderBomb::clone() const { 
+Order* OrderBomb::clone() const { 
   return new OrderBomb(*this); 
 }
 
@@ -148,7 +148,7 @@ OrderBlockade& OrderBlockade::operator=(const OrderBlockade& other) {
 bool OrderBlockade::validate() { return false; }
 void OrderBlockade::execute() {}
 
-Orders* OrderBlockade::clone() const { 
+Order* OrderBlockade::clone() const { 
   return new OrderBlockade(*this); 
 }
 
@@ -182,7 +182,7 @@ OrderAirlift& OrderAirlift::operator=(const OrderAirlift& other) {
 bool OrderAirlift::validate() { return false; }
 void OrderAirlift::execute() {}
 
-Orders* OrderAirlift::clone() const { 
+Order* OrderAirlift::clone() const { 
   return new OrderAirlift(*this); 
 }
 
@@ -216,18 +216,18 @@ OrderNegotiate& OrderNegotiate::operator=(const OrderNegotiate& other) {
 bool OrderNegotiate::validate() { return false; }
 void OrderNegotiate::execute() {}
 
-Orders* OrderNegotiate::clone() const { 
+Order* OrderNegotiate::clone() const { 
   return new OrderNegotiate(*this); 
 }
 
 
 //  OrdersList 
 OrdersList::OrdersList() {
-  orders = new std::vector<Orders*>();
+  orders = new std::vector<Order*>();
 }
 
 OrdersList::OrdersList(const OrdersList& other) {
-  orders = new std::vector<Orders*>();
+  orders = new std::vector<Order*>();
   for (const auto& order : *other.orders) {
     orders->push_back(order->clone());
   }
@@ -236,7 +236,7 @@ OrdersList::OrdersList(const OrdersList& other) {
 OrdersList& OrdersList::operator=(const OrdersList& other) {
   if (this != &other) {
     delete orders;
-    orders = new std::vector<Orders*>();
+    orders = new std::vector<Order*>();
     for (const auto& order : *other.orders) {
       orders->push_back(order->clone());
     }
@@ -252,7 +252,7 @@ bool OrdersList::validateIndex(int index) {
   return index >= 0 && index < orders->size();
 }
 
-void OrdersList::add(Orders* order) {
+void OrdersList::add(Order* order) {
   orders->push_back(order);
 }
 
@@ -271,7 +271,7 @@ void OrdersList::move(int fromIndex, int toIndex) {
   }
     
     //Remove order from the list and reinsert it at the new index
-    Orders* order = orders->at(fromIndex);
+    Order* order = orders->at(fromIndex);
   orders->erase(orders->begin() + fromIndex);
   orders->insert(orders->begin() + toIndex, order);
 }

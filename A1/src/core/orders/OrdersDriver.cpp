@@ -4,7 +4,7 @@
 void testOrdersLists() {
 
   // Testing order functions
-  Orders* testOrder = new OrderDeploy();
+  Order* testOrder = new OrderDeploy();
 
   // Testing validate() and execute()
   std::cout << "Testing validate() and execute() on a Deploy Order:" << '\n';
