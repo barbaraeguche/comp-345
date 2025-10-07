@@ -33,19 +33,19 @@ std::vector<std::string> findMapFiles(const std::string& directory) {
 }
 
 /**
- * Test function that loads map files from A1/maps directory structure
+ * Test function that loads map files from A1/mapFiles directory structure
  */
 void testLoadMaps() {
   std::cout << "========================================" << std::endl;
   std::cout << "   WARZONE MAP LOADER TEST SUITE" << std::endl;
-  std::cout << "   Loading from A1/maps/" << std::endl;
+  std::cout << "   Loading from A1/mapFiles/" << std::endl;
   std::cout << "========================================\n" << std::endl;
 
   MapLoader mapLoader;
 
-  // Find all .map files in maps directory
+  // Find all .map files in mapFiles directory
   // Adjust path based on where the executable is run from
-  const std::string mapDirectory = "../mapFiles"; // from src directory
+  std::string mapDirectory = "mapFiles"; // From src directory
   std::cout << "Searching for .map files in: " << mapDirectory << std::endl;
 
   // Try to resolve absolute path for debugging
