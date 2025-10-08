@@ -1,10 +1,9 @@
 #include "Orders.h"
 
-
 // Base Order
 Order::Order():
   type{nullptr},
-  description{nullptr} 
+  description{nullptr}
   {}
 
 std::ostream& operator<<(std::ostream& os, const Order& order) { 
@@ -18,12 +17,18 @@ std::ostream& operator<<(std::ostream& os, const Order& order) {
 }
 
 //  OrderDeploy
-OrderDeploy::OrderDeploy() {
+OrderDeploy::OrderDeploy(Player* player, Territory* target, int* soldiers) {
+  this->player = player;
+  this->target = target;
+  this->soldiers = soldiers;
   type = new std::string("deploy");
   description = new std::string("Deploys armies to a specified territory you own.");
 }
 
 OrderDeploy::OrderDeploy(const OrderDeploy& other) {
+  this->player = other.player;
+  this->target = other.target;
+  this->soldiers = other.soldiers;
   type = new std::string(*(other.type));
   description = new std::string(*(other.description));
 }
@@ -39,12 +44,29 @@ OrderDeploy& OrderDeploy::operator=(const OrderDeploy& other) {
     delete description;
     type = new std::string(*(other.type));
     description = new std::string(*(other.description));
+    this->player = other.player;
+    this->target = other.target;
+    this->soldiers = other.soldiers;
   }
   return *this;
 }
 
-bool OrderDeploy::validate() { return false; }
-void OrderDeploy::execute() {}
+bool OrderDeploy::validate() { 
+  if (player == nullptr || target == nullptr || soldiers == nullptr) {
+    return false;
+  }else if (!player->ownsTerritory(target) || *soldiers <= 0 || *soldiers > player->getReinforcementPool()) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+void OrderDeploy::execute() {
+  if (this->validate())
+  {
+
+  }
+}
 
 Order* OrderDeploy::clone() const { 
   return new OrderDeploy(*this); 
@@ -52,12 +74,20 @@ Order* OrderDeploy::clone() const {
 
 
 //  OrderAdvance 
-OrderAdvance::OrderAdvance() {
+OrderAdvance::OrderAdvance(Player* player, Territory* source, Territory* target, int* soldiers) {
+  this->player = player;
+  this->source = source;
+  this->target = target;
+  this->soldiers = soldiers;
   type = new std::string("advance");
   description = new std::string("Moves armies from one territory to another, can also be used to attack enemy territories.");
 }
 
 OrderAdvance::OrderAdvance(const OrderAdvance& other) {
+  this->player = other.player;
+  this->source = other.source;
+  this->target = other.target;
+  this->soldiers = other.soldiers;
   type = new std::string(*(other.type));
   description = new std::string(*(other.description));
 }
@@ -73,11 +103,21 @@ OrderAdvance& OrderAdvance::operator=(const OrderAdvance& other) {
     delete description;
     type = new std::string(*(other.type));
     description = new std::string(*(other.description));
+    this->player = other.player;
+    this->source = other.source;
+    this->target = other.target;
+    this->soldiers = other.soldiers;
   }
   return *this;
 }
 
-bool OrderAdvance::validate() { return false; }
+bool OrderAdvance::validate() { 
+  if (source && target && player->ownsTerritory(source) && *soldiers > 0) {
+    return true;
+  }else{
+    return false;
+  }
+}
 void OrderAdvance::execute() {}
 
 Order* OrderAdvance::clone() const { 
@@ -86,12 +126,14 @@ Order* OrderAdvance::clone() const {
 
 
 //  OrderBomb 
-OrderBomb::OrderBomb() {
+OrderBomb::OrderBomb(Territory* target) {
+  this->target = target;
   type = new std::string("bomb");
   description = new std::string("Destroys half the armies on an enemy territory, can only be used once per game.");
 }
 
 OrderBomb::OrderBomb(const OrderBomb& other) {
+  this->target = other.target;
   type = new std::string(*(other.type));
   description = new std::string(*(other.description));
 }
@@ -107,12 +149,18 @@ OrderBomb& OrderBomb::operator=(const OrderBomb& other) {
     delete description;
     type = new std::string(*(other.type));
     description = new std::string(*(other.description));
+    this->target = other.target;
   }
   return *this;
 }
 
-bool OrderBomb::validate() { return false; }
-void OrderBomb::execute() {}
+bool OrderBomb::validate() { return target; }
+void OrderBomb::execute() {
+  if (this->validate())
+  {
+
+  }
+}
 
 Order* OrderBomb::clone() const { 
   return new OrderBomb(*this); 
@@ -120,12 +168,16 @@ Order* OrderBomb::clone() const {
 
 
 //  OrderBlockade 
-OrderBlockade::OrderBlockade() {
+OrderBlockade::OrderBlockade(Player* player, Territory* target) {
+  this->player = player;
+  this->target = target;
   type = new std::string("blockade");
   description = new std::string("Triples the armies on one of your territories and makes it neutral, can only be used once per game.");
 }
 
 OrderBlockade::OrderBlockade(const OrderBlockade& other) {
+  this->player = other.player;
+  this->target = other.target;
   type = new std::string(*(other.type));
   description = new std::string(*(other.description));
 }
@@ -141,11 +193,19 @@ OrderBlockade& OrderBlockade::operator=(const OrderBlockade& other) {
     delete description;
     type = new std::string(*(other.type));
     description = new std::string(*(other.description));
+    this->player = other.player;
+    this->target = other.target;
   }
   return *this;
 }
 
-bool OrderBlockade::validate() { return false; }
+bool OrderBlockade::validate() { 
+  if (target && player->ownsTerritory(target)) {
+    return true;
+  }else {
+    return false;
+  }
+}
 void OrderBlockade::execute() {}
 
 Order* OrderBlockade::clone() const { 
@@ -154,12 +214,20 @@ Order* OrderBlockade::clone() const {
 
 
 //  OrderAirlift 
-OrderAirlift::OrderAirlift() {
+OrderAirlift::OrderAirlift(Player* player, Territory* source, Territory* target, int* soldiers) {
+  this->player = player;
+  this->source = source;
+  this->target = target;
+  this->soldiers = soldiers;
   type = new std::string("airlift");
   description = new std::string("Moves any number of armies from one of your territories to another territory you own, can only be used once per game.");
 }
 
 OrderAirlift::OrderAirlift(const OrderAirlift& other) {
+  this->player = other.player;
+  this->source = other.source;
+  this->target = other.target;
+  this->soldiers = other.soldiers;
   type = new std::string(*(other.type));
   description = new std::string(*(other.description));
 }
@@ -175,11 +243,22 @@ OrderAirlift& OrderAirlift::operator=(const OrderAirlift& other) {
     delete description;
     type = new std::string(*(other.type));
     description = new std::string(*(other.description));
+    this->player = other.player;
+    this->source = other.source;
+    this->target = other.target;
+    this->soldiers = other.soldiers;
   }
   return *this;
 }
 
-bool OrderAirlift::validate() { return false; }
+bool OrderAirlift::validate() { 
+  if (source && target && player->ownsTerritory(source) && *soldiers > 0) {
+    return true;
+  }else{
+    return false;
+  }
+}
+
 void OrderAirlift::execute() {}
 
 Order* OrderAirlift::clone() const { 
@@ -188,12 +267,16 @@ Order* OrderAirlift::clone() const {
 
 
 //  OrderNegotiate 
-OrderNegotiate::OrderNegotiate() {
+OrderNegotiate::OrderNegotiate(Player* player, Player* targetPlayer) {
+  this->player = player;
+  this->targetPlayer = targetPlayer;
   type = new std::string("negotiate");
   description = new std::string("Prevents attacks between you and another player until your next turn, can only be used once per game.");
 }
 
 OrderNegotiate::OrderNegotiate(const OrderNegotiate& other) {
+  this->player = other.player;
+  this->targetPlayer = other.targetPlayer;
   type = new std::string(*(other.type));
   description = new std::string(*(other.description));
 }
@@ -209,11 +292,20 @@ OrderNegotiate& OrderNegotiate::operator=(const OrderNegotiate& other) {
     delete description;
     type = new std::string(*(other.type));
     description = new std::string(*(other.description));
+    this->player = other.player;
+    this->targetPlayer = other.targetPlayer;
   }
   return *this;
 }
 
-bool OrderNegotiate::validate() { return false; }
+bool OrderNegotiate::validate() { 
+  if (targetPlayer && targetPlayer != player) {
+    return true;
+  }else {
+    return false;
+  }
+}
+
 void OrderNegotiate::execute() {}
 
 Order* OrderNegotiate::clone() const { 

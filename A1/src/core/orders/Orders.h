@@ -1,4 +1,5 @@
 #pragma once
+#include "../player/Player.h"
 
 #include <vector>
 #include <iostream>
@@ -28,11 +29,20 @@ protected:
   std::string* type;
   std::string* description;
 
+  //Context needed for validation and execution
+  // Player* player;
+  // Territory* source;
+  // Territory* target;
+  // int* soldiers;
 };
 
 class OrderDeploy : public Order {
+private:
+  Player* player;
+  Territory* target;
+  int* soldiers;
 public:
-  OrderDeploy();
+  OrderDeploy(Player* player, Territory* target, int* soldiers);
   OrderDeploy(const OrderDeploy& other);
   ~OrderDeploy() override;
   bool validate() override;
@@ -42,8 +52,13 @@ public:
 };
 
 class OrderAdvance : public Order {
+private:
+  Player* player;
+  Territory* source;
+  Territory* target;
+  int* soldiers;
 public:
-  OrderAdvance();
+  OrderAdvance(Player* player, Territory* source, Territory* target, int* soldiers);
   OrderAdvance(const OrderAdvance& other);
   ~OrderAdvance() override;
   bool validate() override;
@@ -53,8 +68,10 @@ public:
 };
 
 class OrderBomb : public Order {
+private:
+  Territory* target;
 public:
-  OrderBomb();
+  OrderBomb(Territory* target);
   OrderBomb(const OrderBomb& other);
   ~OrderBomb() override;
   bool validate() override;
@@ -64,8 +81,11 @@ public:
 };
 
 class OrderBlockade : public Order {
+private:
+  Player* player;
+  Territory* target;
 public:
-  OrderBlockade();
+  OrderBlockade(Player* player, Territory* target);
   OrderBlockade(const OrderBlockade& other);
   ~OrderBlockade() override;
   bool validate() override;
@@ -75,8 +95,13 @@ public:
 };
 
 class OrderAirlift : public Order {
+private:
+  Player* player;
+  Territory* source;
+  Territory* target;
+  int* soldiers;
 public:
-  OrderAirlift();
+  OrderAirlift(Player* player, Territory* source, Territory* target, int* soldiers);
   OrderAirlift(const OrderAirlift& other);
   ~OrderAirlift() override;
   bool validate() override;
@@ -86,8 +111,11 @@ public:
 };
 
 class OrderNegotiate : public Order {
+private:
+  Player* player;
+  Player* targetPlayer;
 public:
-  OrderNegotiate();
+  OrderNegotiate(Player* player, Player* targetPlayer);
   OrderNegotiate(const OrderNegotiate& other);
   ~OrderNegotiate() override;
   bool validate() override;
